@@ -3,6 +3,9 @@ import os
 from glob import glob
 
 
+# todo distinguish method from functions
+# it can be done reading the first parameter, if it is self, its a method
+
 class Csv:
     def __init__(self, filename):
         self.f = open(filename, 'w')
@@ -29,18 +32,22 @@ def main():
 
     source_files_path = [y for x in os.walk(source_folder_path) for y in glob(os.path.join(x[0], '*.py'))]
 
-    for filename in source_files_path:
+    for file in source_files_path:
 
-        # if not filename.endswith('configure.py'):
+        # if not file.endswith('configure.py'):
         #     continue
 
-        with open(filename, "r") as source:
+        with open(file, "r") as source:
 
-            print(f'VISITING {filename}')
+            print(f'VISITING {file}')
             tree = ast.parse(source.read())
-
-            analyzer = Analyzer(filename, csv)
-            analyzer.visit(tree)
+            for node in ast.walk(tree):
+                if isinstance(node, ast.ClassDef):
+                    csv.append(f'{node.name},{file},{node.lineno}')
+                elif isinstance(node, ast.FunctionDef):
+                    csv.append(f'{node.name},{file},{node.lineno}')
+            # analyzer = Analyzer(file, csv)
+            # analyzer.visit(tree)
 
 
 class Analyzer(ast.NodeVisitor):
@@ -52,8 +59,7 @@ class Analyzer(ast.NodeVisitor):
         print(f'  visit_ClassDef {node.name} {[x.id for x in node.bases if hasattr(x, "id")]}')
         self.csv.append(f'{node.name},{self.filename},{node.lineno}')
 
-    # todo distinguish method from functions
-    # it can be done reading the first parameter, if it is self, its a method
+
     def visit_FunctionDef(self, node: ast.ClassDef):
         print(f'  visit_FunctionDef {node.name}')  # {[x.id for x in node.bases if hasattr(x, "id")]}')
         self.csv.append(f'{node.name},{self.filename},{node.lineno}')
