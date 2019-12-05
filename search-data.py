@@ -99,6 +99,7 @@ def tfi_idf_query_docs():
     print_results('TF-IDF', sims)
 
 
+# todo the output can be more polished: print ranking and some description to better show what are the hits
 freq_query_docs()
 tfi_idf_query_docs()
 lsi_query_docs()
