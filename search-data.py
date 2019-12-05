@@ -3,6 +3,7 @@ from collections import defaultdict
 from re import finditer
 from gensim import corpora
 from gensim import models
+import gensim
 
 # remove common words and tokenize
 stoplist = set('test tests main'.split())
@@ -63,7 +64,8 @@ corpus = [dictionary.doc2bow(text) for text in texts]
 
 query_string = "Optimizer that implements the Adadelta algorithm".lower()
 query_string = "Optimizer Adadelta".lower()
-query_bow = dictionary.doc2bow(query_string.lower().split())
+query_words = query_string.lower().split()
+query_bow = dictionary.doc2bow(query_words)
 
 from gensim import similarities
 
@@ -100,6 +102,30 @@ def tf_idf_query_docs():
 
 
 # todo the output can be more polished: print ranking and some description to better show what are the hits
+def doc2vec_query_docs():
+    import logging
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+
+    def read_corpus():
+        for i, line in enumerate(texts):
+            print(i, line)
+            yield gensim.models.doc2vec.TaggedDocument(line, [i])
+
+    train_corpus = list(read_corpus())
+    model = gensim.models.doc2vec.Doc2Vec(vector_size=50, min_count=1, epochs=10)
+
+    model.build_vocab(train_corpus)
+
+    model.train(train_corpus, total_examples=model.corpus_count, epochs=model.epochs)
+
+    vector = model.infer_vector(query_words)
+    sims = model.docvecs.most_similar([vector], topn=5)
+    print('doc2vec')
+    for i, rank in sims:
+        print(i, rank, documents[i])
+
+
+doc2vec_query_docs()
 freq_query_docs()
 tf_idf_query_docs()
 lsi_query_docs()
