@@ -77,6 +77,12 @@ def print_results(note, sims):
         print(tup, documents[tup[0]])
 
 
+def freq_query_docs():
+    lsi_index = similarities.MatrixSimilarity(corpus)
+    sims = lsi_index[query_bow]  # perform a similarity query against the corpus
+    print_results('FREQ', sims)
+
+
 def lsi_query_docs():
     lsi_model = models.LsiModel(corpus, id2word=dictionary, num_topics=200)
     lsi_query_vec = lsi_model[query_bow]  # convert the query to LSI space
@@ -95,5 +101,6 @@ def tfi_idf_query_docs():
     print_results('TF-IDF', sims)
 
 
+freq_query_docs()
 tfi_idf_query_docs()
 lsi_query_docs()
