@@ -61,28 +61,39 @@ texts = [d[0] for d in documents]
 dictionary = corpora.Dictionary(texts)
 corpus = [dictionary.doc2bow(text) for text in texts]
 
-print('pre lsimodel')
-lsi_model = models.LsiModel(corpus, id2word=dictionary, num_topics=200)
-print('post lsimodel')
-
 query_string = "Optimizer that implements the Adadelta algorithm".lower()
 query_string = "Optimizer Adadelta".lower()
 query_bow = dictionary.doc2bow(query_string.lower().split())
 
-lsi_query_vec = lsi_model[query_bow]  # convert the query to LSI space
-
 from gensim import similarities
 
-lsi_index = similarities.MatrixSimilarity(lsi_model[corpus])
 
-lsi_index.save('./save/lsi.index')
-lsi_index = similarities.MatrixSimilarity.load('./save/lsi.index')
+def print_results(note, sims):
+    print(note)
+    sims = sorted(enumerate(sims), key=lambda item: -item[1])
+    for i, tup in enumerate(sims):
+        if i > 5:
+            break
+        print(tup, documents[tup[0]])
 
-sims = lsi_index[lsi_query_vec]  # perform a similarity query against the corpus
-print(list(enumerate(sims)))  # print (document_number, document_similarity) 2-tuples
 
-sims = sorted(enumerate(sims), key=lambda item: -item[1])
-for i, tup in enumerate(sims):
-    if i > 5:
-        break
-    print(tup, documents[tup[0]])
+def lsi_query_docs():
+    lsi_model = models.LsiModel(corpus, id2word=dictionary, num_topics=200)
+    lsi_query_vec = lsi_model[query_bow]  # convert the query to LSI space
+    lsi_index = similarities.MatrixSimilarity(lsi_model[corpus])
+    # lsi_index.save('./save/lsi.index'); lsi_index = similarities.MatrixSimilarity.load('./save/lsi.index')
+    sims = lsi_index[lsi_query_vec]  # perform a similarity query against the corpus
+    print_results('LSI', sims)
+
+
+def tfi_idf_query_docs():
+    lsi_model = models.TfidfModel(corpus, id2word=dictionary)
+    lsi_query_vec = lsi_model[query_bow]  # convert the query to LSI space
+    lsi_index = similarities.MatrixSimilarity(lsi_model[corpus])
+    # lsi_index.save('./save/lsi.index'); lsi_index = similarities.MatrixSimilarity.load('./save/lsi.index')
+    sims = lsi_index[lsi_query_vec]  # perform a similarity query against the corpus
+    print_results('TF-IDF', sims)
+
+
+tfi_idf_query_docs()
+lsi_query_docs()
