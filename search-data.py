@@ -91,7 +91,7 @@ def lsi_query_docs():
     print_results('LSI', sims)
 
 
-def tfi_idf_query_docs():
+def tf_idf_query_docs():
     model = models.TfidfModel(corpus, id2word=dictionary)
     index = similarities.MatrixSimilarity(model[corpus])
     query_vec = model[query_bow]  # convert the query to LSI space
@@ -101,5 +101,5 @@ def tfi_idf_query_docs():
 
 # todo the output can be more polished: print ranking and some description to better show what are the hits
 freq_query_docs()
-tfi_idf_query_docs()
+tf_idf_query_docs()
 lsi_query_docs()
