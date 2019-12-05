@@ -3,7 +3,7 @@ import os
 from glob import glob
 import clang.cindex
 
-clang.cindex.Config.set_library_path('./clang+llvm-9.0.0-x86_64-darwin-apple/lib')
+clang.cindex.Config.set_library_path('./clang+llvm-9.0.0/lib')
 
 
 class Csv:
