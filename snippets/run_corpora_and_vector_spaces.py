@@ -117,6 +117,7 @@ corpus = [dictionary.doc2bow(text) for text in texts]
 corpora.MmCorpus.serialize('/tmp/deerwester.mm', corpus)  # store to disk, for later use
 print(corpus)
 
+exit(0)
 ###############################################################################
 # By now it should be clear that the vector feature with ``id=10`` stands for the question "How many
 # times does the word `graph` appear in the document?" and that the answer is "zero" for
