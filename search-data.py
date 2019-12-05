@@ -40,8 +40,8 @@ def process_line(line):
 documents = [d for d in [process_line(line) for line in lines]]
 frequency = defaultdict(int)
 
-for doc in documents:
-    for token in doc[0]:
+for query_string in documents:
+    for token in query_string[0]:
         frequency[token] += 1
 
 
@@ -62,22 +62,23 @@ dictionary = corpora.Dictionary(texts)
 corpus = [dictionary.doc2bow(text) for text in texts]
 
 print('pre lsimodel')
-lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=200)
+lsi_model = models.LsiModel(corpus, id2word=dictionary, num_topics=200)
 print('post lsimodel')
 
-doc = "Optimizer that implements the Adadelta algorithm".lower()
-doc = "Optimizer Adadelta".lower()
-vec_bow = dictionary.doc2bow(doc.lower().split())
-vec_lsi = lsi[vec_bow]  # convert the query to LSI space
+query_string = "Optimizer that implements the Adadelta algorithm".lower()
+query_string = "Optimizer Adadelta".lower()
+query_bow = dictionary.doc2bow(query_string.lower().split())
+
+lsi_query_vec = lsi_model[query_bow]  # convert the query to LSI space
 
 from gensim import similarities
 
-index = similarities.MatrixSimilarity(lsi[corpus])
+lsi_index = similarities.MatrixSimilarity(lsi_model[corpus])
 
-index.save('./save/deerwester.index')
-index = similarities.MatrixSimilarity.load('./save/deerwester.index')
+lsi_index.save('./save/lsi.index')
+lsi_index = similarities.MatrixSimilarity.load('./save/lsi.index')
 
-sims = index[vec_lsi]  # perform a similarity query against the corpus
+sims = lsi_index[lsi_query_vec]  # perform a similarity query against the corpus
 print(list(enumerate(sims)))  # print (document_number, document_similarity) 2-tuples
 
 sims = sorted(enumerate(sims), key=lambda item: -item[1])
