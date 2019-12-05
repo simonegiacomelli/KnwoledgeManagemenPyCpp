@@ -78,26 +78,24 @@ def print_results(note, sims):
 
 
 def freq_query_docs():
-    lsi_index = similarities.MatrixSimilarity(corpus)
-    sims = lsi_index[query_bow]  # perform a similarity query against the corpus
+    index = similarities.MatrixSimilarity(corpus)
+    sims = index[query_bow]  # perform a similarity query against the corpus
     print_results('FREQ', sims)
 
 
 def lsi_query_docs():
     lsi_model = models.LsiModel(corpus, id2word=dictionary, num_topics=200)
-    lsi_query_vec = lsi_model[query_bow]  # convert the query to LSI space
     lsi_index = similarities.MatrixSimilarity(lsi_model[corpus])
-    # lsi_index.save('./save/lsi.index'); lsi_index = similarities.MatrixSimilarity.load('./save/lsi.index')
+    lsi_query_vec = lsi_model[query_bow]  # convert the query to LSI space
     sims = lsi_index[lsi_query_vec]  # perform a similarity query against the corpus
     print_results('LSI', sims)
 
 
 def tfi_idf_query_docs():
-    lsi_model = models.TfidfModel(corpus, id2word=dictionary)
-    lsi_query_vec = lsi_model[query_bow]  # convert the query to LSI space
-    lsi_index = similarities.MatrixSimilarity(lsi_model[corpus])
-    # lsi_index.save('./save/lsi.index'); lsi_index = similarities.MatrixSimilarity.load('./save/lsi.index')
-    sims = lsi_index[lsi_query_vec]  # perform a similarity query against the corpus
+    model = models.TfidfModel(corpus, id2word=dictionary)
+    index = similarities.MatrixSimilarity(model[corpus])
+    query_vec = model[query_bow]  # convert the query to LSI space
+    sims = index[query_vec]  # perform a similarity query against the corpus
     print_results('TF-IDF', sims)
 
 
