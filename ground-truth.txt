@@ -1,2 +1,4 @@
+LeCun uniform initializer,lecun_uniform,tensorflow/python/ops/init_ops_v2.py
+The Glorot normal initializer also called Xavier normal initializer,GlorotNormal,tensorflow/python/ops/init_ops.py
+Optimizer that implements the Adadelta algorithm,Adadelta,tensorflow/python/keras/optimizers.py
 Computes the crossentropy loss between the labels and predictions,CategoricalCrossentropy,tensorflow/python/keras/losses.py
-,GlorotNormal,
