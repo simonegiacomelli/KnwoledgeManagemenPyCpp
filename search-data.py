@@ -104,15 +104,14 @@ def tf_idf_query_docs():
 # todo the output can be more polished: print ranking and some description to better show what are the hits
 def doc2vec_query_docs():
     import logging
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+    # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
     def read_corpus():
         for i, line in enumerate(texts):
-            print(i, line)
             yield gensim.models.doc2vec.TaggedDocument(line, [i])
 
     train_corpus = list(read_corpus())
-    model = gensim.models.doc2vec.Doc2Vec(vector_size=50, min_count=1, epochs=10)
+    model = gensim.models.doc2vec.Doc2Vec(vector_size=100, min_count=0, epochs=40)
 
     model.build_vocab(train_corpus)
 
@@ -125,7 +124,8 @@ def doc2vec_query_docs():
         print(i, rank, documents[i])
 
 
-doc2vec_query_docs()
+
 freq_query_docs()
 tf_idf_query_docs()
 lsi_query_docs()
+doc2vec_query_docs()
