@@ -62,70 +62,87 @@ texts = [d[0] for d in documents]
 dictionary = corpora.Dictionary(texts)
 corpus = [dictionary.doc2bow(text) for text in texts]
 
-query_string = "Optimizer that implements the Adadelta algorithm".lower()
-query_string = "Optimizer Adadelta".lower()
-query_words = query_string.lower().split()
-query_bow = dictionary.doc2bow(query_words)
-
 from gensim import similarities
 
+# freq
+freq_matrix_sim = similarities.MatrixSimilarity(corpus)
 
-def print_results(note, sims):
-    print(note)
-    sims = sorted(enumerate(sims), key=lambda item: -item[1])
-    for i, tup in enumerate(sims):
-        if i > 5:
-            break
-        print(tup, documents[tup[0]])
+# lsi
+lsi_model = models.LsiModel(corpus, id2word=dictionary, num_topics=200)
+lsi_martrix_sim = similarities.MatrixSimilarity(lsi_model[corpus])
 
+# tfidf
+tfidf_model = models.TfidfModel(corpus, id2word=dictionary)
+tfidf_matrix_sim = similarities.MatrixSimilarity(tfidf_model[corpus])
 
-def freq_query_docs():
-    index = similarities.MatrixSimilarity(corpus)
-    sims = index[query_bow]  # perform a similarity query against the corpus
-    print_results('FREQ', sims)
-
-
-def lsi_query_docs():
-    lsi_model = models.LsiModel(corpus, id2word=dictionary, num_topics=200)
-    lsi_index = similarities.MatrixSimilarity(lsi_model[corpus])
-    lsi_query_vec = lsi_model[query_bow]  # convert the query to LSI space
-    sims = lsi_index[lsi_query_vec]  # perform a similarity query against the corpus
-    print_results('LSI', sims)
+# doc2vec
+import logging
 
 
-def tf_idf_query_docs():
-    model = models.TfidfModel(corpus, id2word=dictionary)
-    index = similarities.MatrixSimilarity(model[corpus])
-    query_vec = model[query_bow]  # convert the query to LSI space
-    sims = index[query_vec]  # perform a similarity query against the corpus
-    print_results('TF-IDF', sims)
+# logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+
+def read_corpus():
+    for i, line in enumerate(texts):
+        yield gensim.models.doc2vec.TaggedDocument(line, [i])
 
 
-# todo the output can be more polished: print ranking and some description to better show what are the hits
-def doc2vec_query_docs():
-    import logging
-    # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+doc2vec_train_corpus = list(read_corpus())
+doc2vec_model = gensim.models.doc2vec.Doc2Vec(vector_size=100, min_count=0, epochs=2)
 
-    def read_corpus():
-        for i, line in enumerate(texts):
-            yield gensim.models.doc2vec.TaggedDocument(line, [i])
+doc2vec_model.build_vocab(doc2vec_train_corpus)
 
-    train_corpus = list(read_corpus())
-    model = gensim.models.doc2vec.Doc2Vec(vector_size=100, min_count=0, epochs=40)
-
-    model.build_vocab(train_corpus)
-
-    model.train(train_corpus, total_examples=model.corpus_count, epochs=model.epochs)
-
-    vector = model.infer_vector(query_words)
-    sims = model.docvecs.most_similar([vector], topn=5)
-    print('doc2vec')
-    for i, rank in sims:
-        print(i, rank, documents[i])
+doc2vec_model.train(doc2vec_train_corpus, total_examples=doc2vec_model.corpus_count, epochs=doc2vec_model.epochs)
 
 
+class Query:
+    def __init__(self, query):
+        query_string = query.lower()
+        self.query_words = query_string.lower().split()
+        self.query_bow = dictionary.doc2bow(self.query_words)
+        self.res_freq = []
+        self.res_lsi = []
+        self.res_tfidf = []
+        self.res_doc2vec = []
 
-freq_query_docs()
-tf_idf_query_docs()
-lsi_query_docs()
-doc2vec_query_docs()
+    def print(self):
+        self.print_results('FREQ', self.res_freq)
+        self.print_results('LSI', self.res_lsi)
+        self.print_results('TF-IDF', self.res_tfidf)
+        self.print_results('doc2vec', self.res_doc2vec)
+
+    def freq_query_docs(self):
+        sims = freq_matrix_sim[self.query_bow]  # perform a similarity query against the corpus
+        self.res_freq = self.top5(sims)
+
+    def lsi_query_docs(self):
+        lsi_query_vec = lsi_model[self.query_bow]  # convert the query to LSI space
+        sims = lsi_martrix_sim[lsi_query_vec]  # perform a similarity query against the corpus
+        self.res_lsi = self.top5(sims)
+
+    def tf_idf_query_docs(self):
+        query_vec = tfidf_model[self.query_bow]  # convert the query to LSI space
+        sims = tfidf_matrix_sim[query_vec]  # perform a similarity query against the corpus
+        self.res_tfidf = self.top5(sims)
+
+    # todo the output can be more polished: print ranking and some description to better show what are the hits
+    def doc2vec_query_docs(self):
+        vector = doc2vec_model.infer_vector(self.query_words)
+        self.res_doc2vec = doc2vec_model.docvecs.most_similar([vector], topn=5)
+
+    def top5(self, sims):
+        res = sorted(enumerate(sims), key=lambda item: -item[1])[:5]
+        return res
+
+    def print_results(self, note, sims):
+        print(note)
+        for pos, sim in sims:
+            print(pos, sim, documents[pos])
+
+
+# q = Query("Optimizer that implements the Adadelta algorithm")
+q = Query("Optimizer Adadelta")
+q.freq_query_docs()
+q.tf_idf_query_docs()
+q.lsi_query_docs()
+q.doc2vec_query_docs()
+q.print()
