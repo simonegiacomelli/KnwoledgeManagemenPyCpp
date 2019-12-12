@@ -22,7 +22,7 @@ class Csv:
 def main():
     csv = Csv('data-py.csv')
 
-    source_folder_path = "./tensorflow"
+    source_folder_path = "tensorflow"
     # if len(sys.argv) > 1:
     #     source_folder_path = sys.argv[1]
 
