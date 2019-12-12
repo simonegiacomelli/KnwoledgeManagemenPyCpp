@@ -35,6 +35,7 @@ def main():
     for file in source_files_path:
         # if not file.endswith('scratch_buffer.cc'):
         #     continue
+        filestr = file[len(source_folder_path) + 1:]
 
         def find_typerefs(node, indent):
             """ Find all references to the type named 'typename'
@@ -43,18 +44,18 @@ def main():
                 kind = node.kind
                 if kind == clang.cindex.CursorKind.FUNCTION_DECL:
                     # node.location.line
-                    csv.append(f'{node.spelling},{file},{node.extent.start.line}')
+                    csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
 
                 elif node.kind == clang.cindex.CursorKind.CLASS_DECL:
-                    csv.append(f'{node.spelling},{file},{node.extent.start.line}')
+                    csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
                 elif node.kind == clang.cindex.CursorKind.CXX_METHOD:
-                    csv.append(f'{node.spelling},{file},{node.extent.start.line}')
+                    csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
                 # elif node.kind == clang.cindex.CursorKind.FIELD_DECL:
-                #     csv.append(f'{node.spelling},{file},{node.extent.start.line}')
+                #     csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
                 # elif node.kind == clang.cindex.CursorKind.OBJC_INSTANCE_METHOD_DECL:
-                #     csv.append(f'{node.spelling},{file},{node.extent.start.line}')
+                #     csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
                 # elif node.kind == clang.cindex.CursorKind.OBJC_CLASS_METHOD_DECL:
-                #     csv.append(f'{node.spelling},{file},{node.extent.start.line}')
+                #     csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
                 else:
                     pass
             except:
@@ -73,7 +74,7 @@ def main():
         # with open(filename, "r") as source:
         index = clang.cindex.Index.create()
         tree = index.parse(file)
-        print(f'VISITING {file}')
+        print(f'VISITING {filestr}')
 
         find_typerefs(tree.cursor, '  ')
 

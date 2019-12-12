@@ -36,16 +36,18 @@ def main():
 
         # if not file.endswith('configure.py'):
         #     continue
+        filestr = file[len(source_folder_path) + 1:]
+
 
         with open(file, "r") as source:
 
-            print(f'VISITING {file}')
+            print(f'VISITING {filestr}')
             tree = ast.parse(source.read())
             for node in ast.walk(tree):
                 if isinstance(node, ast.ClassDef):
-                    csv.append(f'{node.name},{file},{node.lineno}')
+                    csv.append(f'{node.name},{filestr},{node.lineno}')
                 elif isinstance(node, ast.FunctionDef):
-                    csv.append(f'{node.name},{file},{node.lineno}')
+                    csv.append(f'{node.name},{filestr},{node.lineno}')
             # analyzer = Analyzer(file, csv)
             # analyzer.visit(tree)
 
