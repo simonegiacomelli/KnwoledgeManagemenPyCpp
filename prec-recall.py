@@ -58,7 +58,10 @@ def main():
         prec = np.average([g.results[engine].prec for g in gts])
         hit = np.sum([g.results[engine].found for g in gts])
         recall = hit / len(gts)
-        print(query.engines[engine], f'precision: {prec} recall:{recall}')
+        print()
+        print(query.engines[engine]+':')
+        print(f'Average precision = {np.round(prec,1)}')
+        print(f'Recall = {np.round(recall,1)}')
 
 
 if __name__ == '__main__':
