@@ -6,7 +6,8 @@ from gensim import models
 import gensim
 
 # remove common words and tokenize
-stoplist = set('test tests main'.split())
+# stoplist = set('test tests main'.split())
+stoplist = set('main'.split())
 with open('data.csv', 'r') as f:
     lines = f.read().splitlines(keepends=False)
 
@@ -41,14 +42,19 @@ def process_line(line):
 documents = [d for d in [process_line(line) for line in lines]]
 frequency = defaultdict(int)
 
-for query_string in documents:
-    for token in query_string[0]:
+for doc in documents:
+    for token in doc[0]:
         frequency[token] += 1
 
 
 # remove token that has frequency 1
 def remove_infrequent(doc):
-    tokens = [token for token in doc[0] if frequency[token] > 1]
+    # tokens = [token for token in doc[0] if frequency[token] > 1]
+    # doc[0] = tokens
+    l = len([t for t in doc[0] if t == 'test'])
+    if l > 0:
+        doc[0] = []
+    tokens = [token for token in doc[0] if len(token) > 3]
     doc[0] = tokens
     return doc
 
@@ -92,6 +98,7 @@ doc2vec_model = gensim.models.doc2vec.Doc2Vec(vector_size=100, min_count=0, epoc
 doc2vec_model.build_vocab(doc2vec_train_corpus)
 
 doc2vec_model.train(doc2vec_train_corpus, total_examples=doc2vec_model.corpus_count, epochs=doc2vec_model.epochs)
+engines = ['FREQ', 'LSI', 'TF-IDF', 'DOC2VEC']
 
 
 class Query:
