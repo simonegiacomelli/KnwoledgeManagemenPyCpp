@@ -51,3 +51,16 @@ LSI:
 Average precision = 0.2
 Recall = 0.4
 
+
+
+**doc2vec vector_size=50, min_count=0, epochs=60
+
+DOC2VEC: simone queries
+Average precision = 0.1
+Recall = 0.3
+
+DOC2VEC: tonella queries
+Average precision = 0.1
+Recall = 0.2
+
+
