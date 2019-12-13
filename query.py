@@ -6,7 +6,6 @@ from gensim import corpora
 from gensim import models
 
 # remove common words and tokenize
-# stoplist = set('test tests main'.split())
 stoplist = set('main'.split())
 with open('data.csv', 'r') as f:
     lines = f.read().splitlines(keepends=False)
@@ -33,10 +32,6 @@ def process_line(line):
     parts = [p for p in parts if p not in stoplist]
     fields.insert(0, parts)
     return fields
-
-
-# todo check './tensorflow/tensorflow/core/kernels/data/flat_map_dataset_op.cc line 46
-# todo it does not detect class FlatMapDatasetOp::Dataset : public DatasetBase {
 
 # process names
 all_documents_dict = {d[1]: d for d in [process_line(line) for line in lines]}
@@ -86,10 +81,6 @@ tfidf_model = models.TfidfModel(corpus, id2word=dictionary)
 tfidf_matrix_sim = similarities.MatrixSimilarity(tfidf_model[corpus])
 
 # doc2vec
-
-
-# logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
 def read_corpus():
     for i, line in enumerate(texts):
         yield gensim.models.doc2vec.TaggedDocument(line, [i])
@@ -144,8 +135,6 @@ class Query:
         query_vec = tfidf_model[self.query_bow]  # convert the query to LSI space
         sims = tfidf_matrix_sim[query_vec]  # perform a similarity query against the corpus
         self.res_tfidf = self.top5(sims)
-
-    # todo the output can be more polished: print ranking and some description to better show what are the hits
 
     def doc2vec_query_docs(self):
         vector = doc2vec_model.infer_vector(self.query_words)

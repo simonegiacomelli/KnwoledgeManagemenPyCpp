@@ -2,7 +2,7 @@ import query
 
 
 def main():
-    q = query.Query("Optimizer Adadelta")
+    q = query.Query("A generic hash table that is immutable once initialized")
     q.print()
 
 
