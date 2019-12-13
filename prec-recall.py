@@ -126,7 +126,7 @@ def plot_tsne(filename, all_results, hue, size):
     df_subset['x'] = tsne_results[:, 0]
     df_subset['y'] = tsne_results[:, 1]
 
-    plt.figure(figsize=(8, 8))
+    plt.figure(figsize=(9, 9))
     sns.scatterplot(
         x="x", y="y",
         hue=hue,
