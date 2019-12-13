@@ -1,9 +1,9 @@
-from pprint import pprint  # pretty-printer
 from collections import defaultdict
 from re import finditer
+
+import gensim
 from gensim import corpora
 from gensim import models
-import gensim
 
 # remove common words and tokenize
 # stoplist = set('test tests main'.split())
@@ -86,7 +86,6 @@ tfidf_model = models.TfidfModel(corpus, id2word=dictionary)
 tfidf_matrix_sim = similarities.MatrixSimilarity(tfidf_model[corpus])
 
 # doc2vec
-import logging
 
 
 # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -164,6 +163,7 @@ class Query:
             # doc = [['collapse', 'repeated', 'all', 'labels', 'the', 'same'], 'testCollapseRepeatedAllLabelsTheSame', './tensorflow/tensorflow/python/kernel_tests/ctc_loss_op_test.py', '630']
             doc = documents[pos]
             print()
-            print(f'#{i + 1} entity name {doc[1]}')
+            print(f'#{i + 1} Entity name: {doc[1]}')
             print(f'   File: {doc[2]}')
             print(f'   Line: {doc[3]}')
+            print(f'   Type: {doc[4]}')
