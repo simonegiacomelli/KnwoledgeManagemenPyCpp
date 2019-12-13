@@ -160,7 +160,6 @@ class Query:
         print(note)
         for i, tup in enumerate(sims):
             pos, sim = tup
-            # doc = [['collapse', 'repeated', 'all', 'labels', 'the', 'same'], 'testCollapseRepeatedAllLabelsTheSame', './tensorflow/tensorflow/python/kernel_tests/ctc_loss_op_test.py', '630']
             doc = documents[pos]
             print()
             print(f'#{i + 1} Entity name: {doc[1]}')
