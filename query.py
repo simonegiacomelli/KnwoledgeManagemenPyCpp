@@ -1,4 +1,3 @@
-
 from pprint import pprint  # pretty-printer
 from collections import defaultdict
 from re import finditer
@@ -51,7 +50,6 @@ for doc in documents_no_dup:
         frequency[token] += 1
 
 
-
 def remove_infrequent(doc):
     # remove token that has frequency 1
     # tokens = [token for token in doc[0] if frequency[token] > 1]
@@ -99,11 +97,11 @@ def read_corpus():
 
 
 doc2vec_train_corpus = list(read_corpus())
-doc2vec_model = gensim.models.doc2vec.Doc2Vec(vector_size=50, min_count=0, epochs=1)
+doc2vec_model = gensim.models.doc2vec.Doc2Vec(vector_size=50, min_count=0, epochs=60)
 
 doc2vec_model.build_vocab(doc2vec_train_corpus)
 
-# doc2vec_model.train(doc2vec_train_corpus, total_examples=doc2vec_model.corpus_count, epochs=doc2vec_model.epochs)
+doc2vec_model.train(doc2vec_train_corpus, total_examples=doc2vec_model.corpus_count, epochs=doc2vec_model.epochs)
 engines = ['FREQ', 'LSI', 'TF-IDF', 'DOC2VEC']
 
 
