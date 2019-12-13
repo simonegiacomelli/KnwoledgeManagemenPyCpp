@@ -37,11 +37,9 @@ def extract_cc():
         filestr = file[len(source_folder_path) + 1:]
 
         def find_typerefs(node, indent):
-            # Find all references to the type named 'typename'
             try:
                 kind = node.kind
                 if kind == clang.cindex.CursorKind.FUNCTION_DECL:
-                    # node.location.line
                     csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
                 elif node.kind == clang.cindex.CursorKind.CLASS_DECL:
                     csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
@@ -89,5 +87,5 @@ class Analyzer(ast.NodeVisitor):
 
 
 if __name__ == '__main__':
-    extract_py()
     extract_cc()
+    extract_py()
