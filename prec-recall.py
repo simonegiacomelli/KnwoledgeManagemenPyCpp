@@ -81,21 +81,26 @@ all_results = []
 hue = []
 style = []
 size = []
+debug = []
 for i, gt in enumerate(gts):
     print()
     print(gt.entity)
-    bows = [query.corpus[hit[0]] for hit in gt.query.res_lsi] + [gt.query.query_bow]
-    lsi_query_vec = [[e[1] for e in query.lsi_model[b]] for b in bows]
-    all_results += lsi_query_vec
+    query_vec = [query.doc2vec_model.infer_vector(gt.query.query_words)]
+    for hit_idx , sim in gt.query.res_doc2vec:
+        doc_words = query.documents[hit_idx][0]
+        doc_vec = query.doc2vec_model.infer_vector(doc_words)
+        query_vec += [doc_vec]
+
+    all_results += query_vec
     # point colors
     # col = [f'col{i}'] * len(lsi_query_vec)
-    col = [gt.entity] * len(lsi_query_vec)
+    col = [gt.entity] * len(query_vec)
     hue += col
     # point marker style
     style += ['truth']
-    style += (['res'] * (len(lsi_query_vec) - 1))
+    style += (['res'] * (len(query_vec) - 1))
     size += ['truth']
-    size += (['hit'] * (len(lsi_query_vec) - 1))
+    size += (['hit'] * (len(query_vec) - 1))
 
 tsne = TSNE(n_components=2, verbose=1, perplexity=2, n_iter=3000)
 tsne_results = tsne.fit_transform(all_results)
