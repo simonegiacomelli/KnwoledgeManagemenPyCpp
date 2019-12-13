@@ -1,0 +1,11 @@
+Get if soft device placement is enabled,get_soft_device_placement,tensorflow/python/framework/config.py
+A queue implementation that dequeues elements in prioritized order,PriorityQueue,tensorflow/python/ops/data_flow_ops.py
+Represents a sparse tensor,SparseTensor,tensorflow/python/framework/sparse_tensor.py
+loss function,get_loss_function,tensorflow/python/keras/engine/training_utils.py
+Computes the crossentropy metric between the labels and predictions,BinaryCrossentropy,tensorflow/python/keras/metrics.py
+LeCun uniform initializer,lecun_uniform,tensorflow/python/ops/init_ops_v2.py
+The Glorot normal initializer also called Xavier normal initializer,GlorotNormal,tensorflow/python/ops/init_ops.py
+Optimizer that implements the Adadelta algorithm,Adadelta,tensorflow/python/keras/optimizers.py
+Computes the crossentropy loss between the labels and predictions,CategoricalCrossentropy,tensorflow/python/keras/losses.py
+Generates hashed sparse cross from a list of sparse and dense tensors,sparse_cross_hashed,tensorflow/python/ops/sparse_ops.py
+Table initializers given keys and values tensors,KeyValueTensorInitializer,tensorflow/python/ops/lookup_ops.py
