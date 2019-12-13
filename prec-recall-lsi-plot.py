@@ -77,47 +77,42 @@ for engine in range(len(query.engines)):
     print(f'Average precision = {np.round(prec, 1)}')
     print(f'Recall = {np.round(recall, 1)}')
 
+all_results = []
+hue = []
+style = []
+size = []
+for i, gt in enumerate(gts):
+    print()
+    print(gt.entity)
+    bows = [query.corpus[hit[0]] for hit in gt.query.res_lsi] + [gt.query.query_bow]
+    lsi_query_vec = [[e[1] for e in query.lsi_model[b]] for b in bows]
+    all_results += lsi_query_vec
+    # point colors
+    # col = [f'col{i}'] * len(lsi_query_vec)
+    col = [gt.entity] * len(lsi_query_vec)
+    hue += col
+    # point marker style
+    style += ['truth']
+    style += (['res'] * (len(lsi_query_vec) - 1))
+    size += ['truth']
+    size += (['hit'] * (len(lsi_query_vec) - 1))
 
-def calc_tsne_doc2vec():
-    all_results = []
-    hue = []
-    size = []
-    for i, gt in enumerate(gts):
-        print()
-        print(gt.entity)
-        query_vec = [query.doc2vec_model.infer_vector(gt.query.query_words)]
-        for hit_idx, sim in gt.query.res_doc2vec:
-            doc_words = query.documents[hit_idx][0]
-            doc_vec = query.doc2vec_model.infer_vector(doc_words)
-            query_vec += [doc_vec]
-
-        all_results += query_vec
-
-        col = [gt.entity] * len(query_vec)
-        hue += col
-        # point marker style
-        size += ['query']
-        size += (['hit'] * (len(query_vec) - 1))
-    return all_results, hue, size
-
-
-def plot_tsne(all_results, hue, size):
-    tsne = TSNE(n_components=2, verbose=0, perplexity=2, n_iter=3000)
-    tsne_results = tsne.fit_transform(all_results)
-    df_subset = pd.DataFrame()
-    df_subset['x'] = tsne_results[:, 0]
-    df_subset['y'] = tsne_results[:, 1]
-
-    plt.figure(figsize=(8, 5))
-    sns.scatterplot(
-        x="x", y="y",
-        hue=hue,
-        size=size,
-        data=df_subset,
-        legend="full",
-        alpha=0.6
-    )
-    plt.show()
-
-
-plot_tsne(*calc_tsne_doc2vec())
+tsne = TSNE(n_components=2, verbose=1, perplexity=2, n_iter=3000)
+tsne_results = tsne.fit_transform(all_results)
+# X = np.array([[0, 0, 0], [0, 1, 1], [1, 0, 1], [1, 1, 1]])
+# tsne_results = TSNE(n_components=2).fit_transform(X)
+df_subset = pd.DataFrame()
+df_subset['tsne-2d-one'] = tsne_results[:, 0]
+df_subset['tsne-2d-two'] = tsne_results[:, 1]
+plt.figure(figsize=(8, 5))
+sns.scatterplot(
+    x="tsne-2d-one", y="tsne-2d-two",
+    hue=hue,
+    # palette=sns.color_palette("hls", 10),
+    # style=style,
+    size=size,
+    data=df_subset,
+    legend="full",
+    alpha=0.6
+)
+plt.show()
