@@ -8,10 +8,10 @@ clang.cindex.Config.set_library_path('./clang+llvm-9.0.0/lib')
 
 class Csv:
     def __init__(self, filename):
-        self.f = open(filename, 'w')
+        self.f = open(filename, 'w+')
 
     def append(self, line):
-        self.f.write(line)
+        self.f.write('0,' + line)
         self.f.write('\n')
         self.f.flush()
 

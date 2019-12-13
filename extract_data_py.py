@@ -8,10 +8,10 @@ from glob import glob
 
 class Csv:
     def __init__(self, filename):
-        self.f = open(filename, 'w')
+        self.f = open(filename, 'w+')
 
     def append(self, line):
-        self.f.write(line)
+        self.f.write('0,' + line)
         self.f.write('\n')
         self.f.flush()
 
@@ -20,7 +20,7 @@ class Csv:
 
 
 def main():
-    csv = Csv('data-py.csv')
+    csv = Csv('data.csv')
 
     source_folder_path = "tensorflow"
     # if len(sys.argv) > 1:
