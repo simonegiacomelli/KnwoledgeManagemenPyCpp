@@ -79,7 +79,6 @@ for engine in range(len(query.engines)):
 
 all_results = []
 hue = []
-style = []
 size = []
 debug = []
 for i, gt in enumerate(gts):
@@ -97,8 +96,6 @@ for i, gt in enumerate(gts):
     col = [gt.entity] * len(query_vec)
     hue += col
     # point marker style
-    style += ['truth']
-    style += (['res'] * (len(query_vec) - 1))
     size += ['truth']
     size += (['hit'] * (len(query_vec) - 1))
 
@@ -107,14 +104,12 @@ tsne_results = tsne.fit_transform(all_results)
 # X = np.array([[0, 0, 0], [0, 1, 1], [1, 0, 1], [1, 1, 1]])
 # tsne_results = TSNE(n_components=2).fit_transform(X)
 df_subset = pd.DataFrame()
-df_subset['tsne-2d-one'] = tsne_results[:, 0]
-df_subset['tsne-2d-two'] = tsne_results[:, 1]
+df_subset['x'] = tsne_results[:, 0]
+df_subset['y'] = tsne_results[:, 1]
 plt.figure(figsize=(8, 5))
 sns.scatterplot(
-    x="tsne-2d-one", y="tsne-2d-two",
+    x="x", y="y",
     hue=hue,
-    # palette=sns.color_palette("hls", 10),
-    # style=style,
     size=size,
     data=df_subset,
     legend="full",
