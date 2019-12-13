@@ -1,3 +1,4 @@
+
 from pprint import pprint  # pretty-printer
 from collections import defaultdict
 from re import finditer
@@ -27,7 +28,7 @@ def split_entity(id):
 
 
 def process_line(line):
-    fields = line.split(',')
+    fields = line.split(',')[1:]
     name = fields[0]
     parts = split_entity(name)
     parts = [p for p in parts if p not in stoplist]
@@ -39,28 +40,33 @@ def process_line(line):
 # todo it does not detect class FlatMapDatasetOp::Dataset : public DatasetBase {
 
 # process names
-documents = [d for d in [process_line(line) for line in lines]]
+all_documents_dict = {d[1]: d for d in [process_line(line) for line in lines]}
+
+documents_no_dup = list(all_documents_dict.values())
+
 frequency = defaultdict(int)
 
-for doc in documents:
+for doc in documents_no_dup:
     for token in doc[0]:
         frequency[token] += 1
 
 
-# remove token that has frequency 1
+
 def remove_infrequent(doc):
+    # remove token that has frequency 1
     # tokens = [token for token in doc[0] if frequency[token] > 1]
     # doc[0] = tokens
-    l = len([t for t in doc[0] if t == 'test'])
+
+    l = len([t for t in doc[0] if t == 'test' or t == 'tests'])
     if l > 0:
         doc[0] = []
-    tokens = [token for token in doc[0] if len(token) > 3]
+    tokens = [token for token in doc[0] if len(token) > 2]
     doc[0] = tokens
     return doc
 
 
 # and exclude documents that does not has tokens
-documents = [remove_infrequent(doc) for doc in documents]
+documents = [remove_infrequent(doc) for doc in documents_no_dup]
 documents = [d for d in documents if len(d[0]) > 0]
 
 texts = [d[0] for d in documents]
@@ -93,11 +99,11 @@ def read_corpus():
 
 
 doc2vec_train_corpus = list(read_corpus())
-doc2vec_model = gensim.models.doc2vec.Doc2Vec(vector_size=100, min_count=0, epochs=2)
+doc2vec_model = gensim.models.doc2vec.Doc2Vec(vector_size=50, min_count=0, epochs=1)
 
 doc2vec_model.build_vocab(doc2vec_train_corpus)
 
-doc2vec_model.train(doc2vec_train_corpus, total_examples=doc2vec_model.corpus_count, epochs=doc2vec_model.epochs)
+# doc2vec_model.train(doc2vec_train_corpus, total_examples=doc2vec_model.corpus_count, epochs=doc2vec_model.epochs)
 engines = ['FREQ', 'LSI', 'TF-IDF', 'DOC2VEC']
 
 
