@@ -23,7 +23,7 @@ class Csv:
 
 
 csv = Csv('data.csv')
-source_folder_path = "tensorflow"
+source_folder_path = "tensorflow/tensorflow"
 if not os.path.isdir(source_folder_path):
     print('Folder ', source_folder_path, 'not found')
     exit(0)
