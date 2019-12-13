@@ -1,0 +1,14 @@
+key,name,file,line,type
+1,main,third_party/toolchains/preconfig/ubuntu16.04/clang/tools/cpp/empty.cc,1,function
+2,main,third_party/toolchains/preconfig/ubuntu16.04/gcc7_manylinux2010/tools/cpp/empty.cc,1,function
+3,main,third_party/toolchains/preconfig/centos6/gcc7/tools/cpp/empty.cc,1,function
+4,InitializeVariables,tensorflow/tools/benchmark/benchmark_model.cc,54,function
+5,CreateTensorsFromInputInfo,tensorflow/tools/benchmark/benchmark_model.cc,75,function
+6,GetOutputShapes,tensorflow/tools/benchmark/benchmark_model.cc,117,function
+7,CalculateFlops,tensorflow/tools/benchmark/benchmark_model.cc,149,function
+8,RecordBenchmarkEntry,tensorflow/tools/benchmark/benchmark_model.cc,215,function
+9,SleepSeconds,tensorflow/tools/benchmark/benchmark_model.cc,232,function
+10,InitializeSession,tensorflow/tools/benchmark/benchmark_model.cc,249,function
+11,RunBenchmark,tensorflow/tools/benchmark/benchmark_model.cc,284,function
+12,TimeMultipleRuns,tensorflow/tools/benchmark/benchmark_model.cc,321,function
+13,Main,tensorflow/tools/benchmark/benchmark_model.cc,368,function

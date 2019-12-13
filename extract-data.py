@@ -36,26 +36,26 @@ def extract_cc():
 
         filestr = file[len(source_folder_path) + 1:]
 
-        def find_typerefs(node, indent):
+        def find_typerefs(node):
             try:
                 kind = node.kind
                 if kind == clang.cindex.CursorKind.FUNCTION_DECL:
-                    csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
+                    csv.append(f'{node.spelling},{filestr},{node.extent.start.line},function')
                 elif node.kind == clang.cindex.CursorKind.CLASS_DECL:
-                    csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
+                    csv.append(f'{node.spelling},{filestr},{node.extent.start.line},class')
                 elif node.kind == clang.cindex.CursorKind.CXX_METHOD:
-                    csv.append(f'{node.spelling},{filestr},{node.extent.start.line}')
+                    csv.append(f'{node.spelling},{filestr},{node.extent.start.line},method')
             except:
                 pass
 
             for c in node.get_children():
-                find_typerefs(c, indent + '  ')
+                find_typerefs(c)
 
         index = clang.cindex.Index.create()
         tree = index.parse(file)
         print(f'VISITING {filestr}')
 
-        find_typerefs(tree.cursor, '  ')
+        find_typerefs(tree.cursor)
 
 
 def extract_py():
@@ -69,21 +69,9 @@ def extract_py():
             tree = ast.parse(source.read())
             for node in ast.walk(tree):
                 if isinstance(node, ast.ClassDef):
-                    csv.append(f'{node.name},{filestr},{node.lineno}')
+                    csv.append(f'{node.name},{filestr},{node.lineno},class')
                 elif isinstance(node, ast.FunctionDef):
-                    csv.append(f'{node.name},{filestr},{node.lineno}')
-
-
-class Analyzer(ast.NodeVisitor):
-    def __init__(self, filename, csv):
-        self.filename = filename
-        self.csv = csv
-
-    def visit_ClassDef(self, node: ast.ClassDef):
-        self.csv.append(f'{node.name},{self.filename},{node.lineno}')
-
-    def visit_FunctionDef(self, node: ast.ClassDef):
-        self.csv.append(f'{node.name},{self.filename},{node.lineno}')
+                    csv.append(f'{node.name},{filestr},{node.lineno},function')
 
 
 if __name__ == '__main__':
