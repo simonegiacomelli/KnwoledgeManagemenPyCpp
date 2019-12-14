@@ -83,11 +83,9 @@ def calc_tsne_lsi():
         bows = [query.corpus[hit[0]] for hit in gt.query.res_lsi] + [gt.query.query_bow]
         lsi_query_vec = [[e[1] for e in query.lsi_model[b]] for b in bows]
         vectors += lsi_query_vec
-        # point colors
-        # col = [f'col{i}'] * len(lsi_query_vec)
         col = [gt.entity] * len(lsi_query_vec)
         hue += col
-        # point marker style
+        # point marker size
         size += ['query']
         size += (['hit'] * (len(lsi_query_vec) - 1))
     return vectors, hue, size
@@ -110,7 +108,7 @@ def calc_tsne_doc2vec():
 
         col = [gt.entity] * len(query_vec)
         hue += col
-        # point marker style
+        # point marker size
         size += ['query']
         size += (['hit'] * (len(query_vec) - 1))
     return vectors, hue, size
