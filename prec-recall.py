@@ -76,47 +76,44 @@ for engine in range(len(query.engines)):
 
 
 def calc_tsne_lsi():
-    vectors = []
+    embeddings = []
     hue = []
     size = []
     for i, gt in enumerate(gts):
         bows = [query.corpus[hit[0]] for hit in gt.query.res_lsi] + [gt.query.query_bow]
         lsi_query_vec = [[e[1] for e in query.lsi_model[b]] for b in bows]
-        vectors += lsi_query_vec
-        col = [gt.entity] * len(lsi_query_vec)
-        hue += col
+        embeddings += lsi_query_vec
+        hue += [gt.entity] * len(lsi_query_vec)
         # point marker size
         size += ['query']
         size += (['hit'] * (len(lsi_query_vec) - 1))
-    return vectors, hue, size
+    return embeddings, hue, size
 
 
 def calc_tsne_doc2vec():
-    vectors = []
+    embeddings = []
     hue = []
     size = []
     for i, gt in enumerate(gts):
-        print()
-        print(gt.entity)
         query_vec = [query.doc2vec_model.infer_vector(gt.query.query_words)]
         for hit_idx, sim in gt.query.res_doc2vec:
             doc_words = query.documents[hit_idx][0]
             doc_vec = query.doc2vec_model.infer_vector(doc_words)
             query_vec += [doc_vec]
 
-        vectors += query_vec
+        embeddings += query_vec
 
-        col = [gt.entity] * len(query_vec)
-        hue += col
+        hue += [gt.entity] * len(query_vec)
         # point marker size
         size += ['query']
         size += (['hit'] * (len(query_vec) - 1))
-    return vectors, hue, size
+    return embeddings, hue, size
 
 
-def plot_tsne(filename, all_results, hue, size):
+def plot_tsne(filename, embeddings, hue, size):
+    print('generating', filename)
     tsne = TSNE(n_components=2, verbose=0, perplexity=2, n_iter=3000)
-    tsne_results = tsne.fit_transform(all_results)
+    tsne_results = tsne.fit_transform(embeddings)
     df_subset = pd.DataFrame()
     df_subset['x'] = tsne_results[:, 0]
     df_subset['y'] = tsne_results[:, 1]
@@ -128,11 +125,24 @@ def plot_tsne(filename, all_results, hue, size):
         size=size,
         data=df_subset,
         legend="full",
-        alpha=0.6
+        alpha=1.0
     )
+    for idx, coo in enumerate(zip(tsne_results[:, 0], tsne_results[:, 1])):
+        if idx % 6 != 0:
+            continue
+        x, y = coo
+        plt.annotate(
+            hue[idx],
+            xy=(x, y), xytext=(-2, 2),
+            textcoords='offset points', ha='right', va='bottom',
+            fontsize=5
+            # bbox=dict(boxstyle='round,pad=1.', fc='yellow', alpha=0.5),
+            #arrowprops=dict(arrowstyle='<-', connectionstyle='arc3,rad=0')
+        )
     plt.savefig(filename)
     # plt.show()
 
 
+print()
 plot_tsne('plot-doc2vec.png', *calc_tsne_doc2vec())
 plot_tsne('plot-lsi.png', *calc_tsne_lsi())
