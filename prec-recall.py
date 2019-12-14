@@ -127,20 +127,13 @@ def plot_tsne(filename, embeddings, hue, size):
         legend="full",
         alpha=1.0
     )
-    for idx, coo in enumerate(zip(tsne_results[:, 0], tsne_results[:, 1])):
+    for idx, xy in enumerate(zip(tsne_results[:, 0], tsne_results[:, 1])):
         if idx % 6 != 0:
             continue
-        x, y = coo
-        plt.annotate(
-            hue[idx],
-            xy=(x, y), xytext=(-2, 2),
-            textcoords='offset points', ha='right', va='bottom',
-            fontsize=5
-            # bbox=dict(boxstyle='round,pad=1.', fc='yellow', alpha=0.5),
-            #arrowprops=dict(arrowstyle='<-', connectionstyle='arc3,rad=0')
-        )
+        plt.annotate(hue[idx], xy=xy, xytext=(-2, 2),
+                     textcoords='offset points', ha='right', va='bottom',
+                     fontsize=5)
     plt.savefig(filename)
-    # plt.show()
 
 
 print()
