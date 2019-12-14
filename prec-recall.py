@@ -76,13 +76,13 @@ for engine in range(len(query.engines)):
 
 
 def calc_tsne_lsi():
-    all_results = []
+    vectors = []
     hue = []
     size = []
     for i, gt in enumerate(gts):
         bows = [query.corpus[hit[0]] for hit in gt.query.res_lsi] + [gt.query.query_bow]
         lsi_query_vec = [[e[1] for e in query.lsi_model[b]] for b in bows]
-        all_results += lsi_query_vec
+        vectors += lsi_query_vec
         # point colors
         # col = [f'col{i}'] * len(lsi_query_vec)
         col = [gt.entity] * len(lsi_query_vec)
@@ -90,11 +90,11 @@ def calc_tsne_lsi():
         # point marker style
         size += ['query']
         size += (['hit'] * (len(lsi_query_vec) - 1))
-    return all_results, hue, size
+    return vectors, hue, size
 
 
 def calc_tsne_doc2vec():
-    all_results = []
+    vectors = []
     hue = []
     size = []
     for i, gt in enumerate(gts):
@@ -106,14 +106,14 @@ def calc_tsne_doc2vec():
             doc_vec = query.doc2vec_model.infer_vector(doc_words)
             query_vec += [doc_vec]
 
-        all_results += query_vec
+        vectors += query_vec
 
         col = [gt.entity] * len(query_vec)
         hue += col
         # point marker style
         size += ['query']
         size += (['hit'] * (len(query_vec) - 1))
-    return all_results, hue, size
+    return vectors, hue, size
 
 
 def plot_tsne(filename, all_results, hue, size):
