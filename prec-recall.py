@@ -33,7 +33,7 @@ class Measure:
             self.prec = 0
             st = 'not found'
 
-        print('  doc', st, repr)
+        # print('  doc', st, repr)
         self.pos = pos
 
 
@@ -47,11 +47,11 @@ class GroundTruthRow:
         if self.correct_idx == -1:
             raise Exception(f'Ground truth not found in documents. Offending line {p}')
 
-        print(query.documents[self.correct_idx], "query: " + p[0])
+        # print(query.documents[self.correct_idx], "query: " + p[0])
         # execute returns 4 items, one for each engine
         self.results = [Measure(p[0], r, self.correct_idx) for r in self.query.execute()]
 
-        print('precision')
+        # print('precision')
 
 
 with open('ground-truth.txt', 'r') as f:
